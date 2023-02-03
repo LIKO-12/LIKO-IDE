@@ -40,10 +40,31 @@ function _keypressed(key)
 end
 `;
 
-monaco.editor.create(editorContainer, {
-    value: exampleProgram,
+// TODO: Add JetBrains Mono & Enable Ligatures
+
+const editor = monaco.editor.create(editorContainer, {
+    value: localStorage.getItem('code') ?? exampleProgram,
     language: 'lua',
     theme: 'vs-dark',
+    cursorBlinking: 'smooth',
 });
 
+const model = editor.getModel()!;
 
+model.onDidChangeContent(() => {
+    localStorage.setItem('code', model.getValue());
+    // TODO: sync indicator.
+    // TODO: use a persistent storage method.
+});
+
+editor.addAction({
+    id: 'liko-run',
+    label: 'Run in LIKO-12',
+    keybindings: [
+        monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyR,
+    ],
+    contextMenuGroupId: 'navigation',
+    run: () => alert('Error: not implemented!'),
+});
+
+addEventListener('resize', () => editor.layout());
