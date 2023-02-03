@@ -11,7 +11,13 @@
     "start": "webpack serve --open"
   },
   "dependencies": {
+    "monaco-editor": "^0.34.1"
+  },
+  "devDependencies": {
+    "css-loader": "^6.7.3",
     "html-webpack-plugin": "^5.5.0",
+    "monaco-editor-webpack-plugin": "^7.0.1",
+    "style-loader": "^3.3.1",
     "ts-loader": "^9.4.2",
     "typescript": "^4.9.5",
     "webpack": "^5.75.0",

@@ -1,6 +1,7 @@
 //@ts-check
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 
 // TODO: Tree shaking.
 // TODO: Chunk splitting, avoid unnecessary download of monaco on each update.
@@ -21,6 +22,9 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'LIKO-12 WebIDE'
         }),
+        new MonacoWebpackPlugin({
+            languages: ['lua', 'javascript', 'typescript'],
+        }),
     ],
     module: {
         rules: [
@@ -28,6 +32,14 @@ module.exports = {
                 test: /\.tsx?$/,
                 use: 'ts-loader',
                 exclude: /node_modules/,
+            },
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader'],
+            },
+            {
+                test: /\.ttf$/,
+                type: 'asset/resource',
             },
         ],
     },
