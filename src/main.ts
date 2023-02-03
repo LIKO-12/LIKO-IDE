@@ -1,8 +1,6 @@
 import './styles.css';
 import * as monaco from 'monaco-editor';
 
-console.log('Hello from TypeScript!');
-
 const editorContainer = document.createElement('div');
 editorContainer.style.height = '100%';
 document.body.append(editorContainer);
