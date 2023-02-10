@@ -1,5 +1,8 @@
 import './styles.css';
 import * as monaco from 'monaco-editor';
+import { Remote } from './remote';
+
+const remote = new Remote();
 
 const editorContainer = document.createElement('div');
 editorContainer.style.height = '100%';
@@ -62,7 +65,10 @@ editor.addAction({
         monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyR,
     ],
     contextMenuGroupId: 'navigation',
-    run: () => alert('Error: not implemented!'),
+    run: async () => {
+        await remote.run(model.getValue());
+        console.log('Sent script successfully!');
+    },
 });
 
 addEventListener('resize', () => editor.layout());
