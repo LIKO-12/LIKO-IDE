@@ -19,7 +19,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: node_modules/.cache/webpack/
-          key: ${{ GITHUB_REF_NAME }}-webpack-build
+          key: ${{ github.ref_name }}-webpack-build
           # Fallback to use "main" branch cache.
           restore-keys: |
             main-webpack-build
