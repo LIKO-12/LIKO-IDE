@@ -14,6 +14,15 @@ jobs:
       
       - name: Install the dependencies
         run: yarn
+
+      - name: Synchronize the webpack cache
+        uses: actions/cache@v3
+        with:
+          path: node_modules/.cache/webpack/
+          key: ${{ GITHUB_REF_NAME }}-webpack-build
+          # Fallback to use "main" branch cache.
+          restore-keys: |
+            main-webpack-build
       
       - name: Build the project
         run: yarn build
