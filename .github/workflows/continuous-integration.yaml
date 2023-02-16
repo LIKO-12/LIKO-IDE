@@ -25,4 +25,4 @@ jobs:
             main-webpack-build
       
       - name: Build the project
-        run: yarn build
+        run: yarn build-dev

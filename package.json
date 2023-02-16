@@ -8,6 +8,7 @@
   "private": true,
   "scripts": {
     "build": "webpack --config webpack.prod.js",
+    "build-dev": "webpack --config webpack.dev.js",
     "start": "webpack serve --open --config webpack.dev.js"
   },
   "dependencies": {
