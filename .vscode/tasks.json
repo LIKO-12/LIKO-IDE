@@ -3,10 +3,10 @@
 	"tasks": [
 		{
 			"type": "npm",
-			"script": "start",
+			"script": "start-vscode",
 			"problemMatcher": [],
 			"label": "Run Development Server",
-			"detail": "webpack serve --open",
+			"detail": "webpack serve",
 			"isBackground": true,
 			"group": {
 				"kind": "build",
