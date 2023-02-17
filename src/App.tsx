@@ -1,9 +1,15 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
+import { CodeEditorApp } from './components/CodeEditorApp';
+
 function App() {
-    return <p>It's been a long time ago!</p>;
+    return <CodeEditorApp />;
 }
 
-const root = createRoot(document.body);
+const rootNode = document.createElement('div');
+rootNode.id = 'root';
+document.body.append(rootNode);
+
+const root = createRoot(rootNode);
 root.render(<App />);

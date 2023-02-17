@@ -4,10 +4,6 @@ import { Remote } from './remote';
 
 const remote = new Remote();
 
-const editorContainer = document.createElement('div');
-editorContainer.style.height = '100%';
-document.body.append(editorContainer);
-
 const exampleProgram = `
 print("Hello from game.lua");
 
@@ -43,32 +39,51 @@ end
 
 // TODO: Add JetBrains Mono & Enable Ligatures
 
-const editor = monaco.editor.create(editorContainer, {
-    value: localStorage.getItem('code') ?? exampleProgram,
-    language: 'lua',
-    theme: 'vs-dark',
-    cursorBlinking: 'smooth',
-});
+export class CodeEditor {
+    private readonly editor: monaco.editor.IStandaloneCodeEditor;
+    private readonly onResizeListener = () => this.editor.layout();
+    private disposed = false;
 
-const model = editor.getModel()!;
+    constructor(
+        container: HTMLElement,
+    ) {
+        this.editor = monaco.editor.create(container, {
+            value: localStorage.getItem('code') ?? exampleProgram,
+            language: 'lua',
+            theme: 'vs-dark',
+            cursorBlinking: 'smooth',
+        });
 
-model.onDidChangeContent(() => {
-    localStorage.setItem('code', model.getValue());
-    // TODO: sync indicator.
-    // TODO: use a persistent storage method.
-});
+        const model = this.editor.getModel()!;
 
-editor.addAction({
-    id: 'liko-run',
-    label: 'Run in LIKO-12',
-    keybindings: [
-        monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyR,
-    ],
-    contextMenuGroupId: 'navigation',
-    run: async () => {
-        await remote.run(model.getValue());
-        console.log('Sent script successfully!');
-    },
-});
+        model.onDidChangeContent(() => {
+            localStorage.setItem('code', model.getValue());
+            // TODO: sync indicator.
+            // TODO: use a persistent storage method.
+        });
 
-addEventListener('resize', () => editor.layout());
+        this.editor.addAction({
+            id: 'liko-run',
+            label: 'Run in LIKO-12',
+            keybindings: [
+                monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyR,
+            ],
+            contextMenuGroupId: 'navigation',
+            run: async () => {
+                await remote.run(model.getValue());
+                console.log('Sent script successfully!');
+            },
+        });
+
+        addEventListener('resize', this.onResizeListener);
+    }
+
+    dispose() {
+        if (this.disposed) throw Error('Already disposed');
+        this.disposed = true;
+
+        removeEventListener('resize', this.onResizeListener);
+        this.editor.dispose();
+    }
+}
+

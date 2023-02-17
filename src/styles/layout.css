@@ -5,17 +5,17 @@
 .panels-container {
     width: 100%;
     height: calc(100% - var(--status-bar-height));
+    overflow: hidden;
 }
 
 .left-panel, .right-panel {
     height: 100%;
-
     display: inline-block;
 }
 
 .left-panel {
     width: var(--editor-width, 50%);
-    background: lightcoral;
+    background: red;
 }
 
 .right-panel {
