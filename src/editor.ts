@@ -11,7 +11,7 @@ document.body.append(editorContainer);
 const exampleProgram = `
 print("Hello from game.lua");
 
-liko.graphics.clear();
+clear();
 
 local rectX, rectY = 5, 5;
 local rectColor = 0;
@@ -19,8 +19,8 @@ local rectColor = 0;
 local movementSpeed = 64;
 
 function _draw()
-    liko.graphics.rectangle(rectX, rectY, 10, 10, true, rectColor)
-    liko.graphics.rectangle(rectX, rectY, 10, 10, false, rectColor + 8)
+    rectangle(rectX, rectY, 10, 10, true, rectColor)
+    rectangle(rectX, rectY, 10, 10, false, rectColor + 8)
 end
 
 function _update(dt)
@@ -37,7 +37,7 @@ end
 
 function _keypressed(key)
     if key == 'z' then rectColor = (rectColor + 1) % 8 end
-    if key == 'x' then liko.graphics.clear() end
+    if key == 'x' then clear() end
 end
 `;
 
