@@ -51,10 +51,10 @@ function StatusBar() {
         <Tippy singleton={source} duration={100} />
 
         <div className='left-items'>
-            <StatusItem icon='update' alt='IDE Release' content='EXPERIMENTAL YYYY-MM-DD hh:mm' singleton={target} />
+            <StatusItem icon='update' alt='IDE Release' content='EXPERIMENTAL 2023-02-17 18:40' singleton={target} />
         </div>
         <div className='right-items'>
-            <StatusItem icon='power' alt='Version: experimental-YYYYMMDD-hhmm' content='Connected to LIKO-12' singleton={target} />
+            <StatusItem icon='power' alt='LIKO-12: experimental-20230217-1843' content='Connected' singleton={target} />
             <StatusItem icon='play_arrow' alt='Execute the code in LIKO-12' content='Run Game' singleton={target} />
         </div>
     </footer>;
