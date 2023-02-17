@@ -1,3 +1,4 @@
+import Tippy, { useSingleton } from '@tippyjs/react';
 import React, { useEffect, useRef } from 'react';
 
 import { CodeEditor } from '../editor';
@@ -25,24 +26,36 @@ interface StatusItemProps {
      * https://fonts.google.com/icons?icon.style=Outlined
      */
     icon?: string;
+    alt?: string;
     content?: string;
+
+    /**
+     * Tippy singleton.
+     */
+    singleton?: any;
 }
 
-function StatusItem({ icon, content }: StatusItemProps) {
-    return <div className='item'>
-        {icon ? <span className='material-icons-outlined'>{icon}</span> : null}
-        {content ?? null}
-    </div>
+function StatusItem({ icon, alt, content, singleton }: StatusItemProps) {
+    return <Tippy content={alt} disabled={!alt} singleton={singleton}>
+        <div className='item'>
+            {icon ? <span className='material-icons-outlined'>{icon}</span> : null}
+            {content ?? null}
+        </div>
+    </Tippy>
 }
 
 function StatusBar() {
+    const [source, target] = useSingleton();
+
     return <footer className='status-bar'>
+        <Tippy singleton={source} duration={100} />
+
         <div className='left-items'>
-            <StatusItem icon='update' content='EXPERIMENTAL YYYY-MM-DD hh:mm' />
+            <StatusItem icon='update' alt='IDE Release' content='EXPERIMENTAL YYYY-MM-DD hh:mm' singleton={target} />
         </div>
         <div className='right-items'>
-            <StatusItem icon='power' content='Connected to LIKO-12' />
-            <StatusItem icon='play_arrow' content='Run Game' />
+            <StatusItem icon='power' alt='Version: experimental-YYYYMMDD-hhmm' content='Connected to LIKO-12' singleton={target} />
+            <StatusItem icon='play_arrow' alt='Execute the code in LIKO-12' content='Run Game' singleton={target} />
         </div>
     </footer>;
 }
