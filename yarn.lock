@@ -12,6 +12,11 @@
   resolved "https://registry.yarnpkg.com/@fontsource/jetbrains-mono/-/jetbrains-mono-4.5.12.tgz#d965dca932f0ecf5379013f4dff3aec7b817b91b"
   integrity sha512-LJF1ala1/u+wXZmESFqIk08FA9yGX4/uAAleCHmXUMgEjvNAYFHUQQ7eK5hQQoBOwh99cU5suTrqYqEkgzwzPA==
 
+"@fontsource/material-icons-outlined@^4.5.4":
+  version "4.5.4"
+  resolved "https://registry.yarnpkg.com/@fontsource/material-icons-outlined/-/material-icons-outlined-4.5.4.tgz#23ce468b7c569d1c717061cb8c5a69b3cb3fba12"
+  integrity sha512-2SLQe/pAlOzoE2Kd5cBxqTgI9U63hf3a7RrCF8GFvgPkYhF6WOcIzFzsLc1Fdf+UhcYS+Hgpp6o8peguwZGK9Q==
+
 "@jridgewell/gen-mapping@^0.3.0":
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/@jridgewell/gen-mapping/-/gen-mapping-0.3.2.tgz#c1aedc61e853f2bb9f5dfe6d4442d3b565b253b9"

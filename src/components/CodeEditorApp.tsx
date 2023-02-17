@@ -20,19 +20,29 @@ function RightPanel() {
     </div>;
 }
 
-function StatusItem({ content }: { content: string }) {
+interface StatusItemProps {
+    /**
+     * https://fonts.google.com/icons?icon.style=Outlined
+     */
+    icon?: string;
+    content?: string;
+}
+
+function StatusItem({ icon, content }: StatusItemProps) {
     return <div className='item'>
-        {content}
+        {icon ? <span className='material-icons-outlined'>{icon}</span> : null}
+        {content ?? null}
     </div>
 }
 
 function StatusBar() {
     return <footer className='status-bar'>
         <div className='left-items'>
-            <StatusItem content='EXPERIMENTAL YYYY-MM-DD hh:mm' />
+            <StatusItem icon='update' content='EXPERIMENTAL YYYY-MM-DD hh:mm' />
         </div>
         <div className='right-items'>
-            <StatusItem content='Connected to LIKO-12' />
+            <StatusItem icon='power' content='Connected to LIKO-12' />
+            <StatusItem icon='play_arrow' content='Run Game' />
         </div>
     </footer>;
 }

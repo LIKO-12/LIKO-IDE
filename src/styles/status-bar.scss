@@ -20,11 +20,16 @@
         flex-grow: 1;
     }
 
+    .right-items {
+        flex-direction: row-reverse;
+    }
+
     .item {
         height: 100%;
         max-width: 40vw;
 
-        display: inline-block;
+        display: flex;
+        align-items: center;
 
         margin: 0 3px;
         padding: 0 5px;
@@ -43,6 +48,12 @@
 
         &:hover {
             background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .material-icons-outlined {
+            font-size: 16px;
+            font-weight: 400;
+            margin-right: 4px;
         }
     }
 }
