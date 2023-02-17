@@ -5,4 +5,6 @@ import './styles/status-bar.css';
 
 // import './editor';
 
-import './proto';
+// import './proto';
+
+import 'App';

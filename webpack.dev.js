@@ -6,9 +6,6 @@ module.exports = merge(common, {
     devtool: 'inline-source-map',
     devServer: {
         static: './dist',
-        client: {
-            progress: true,
-        },
     },
     cache: {
         type: 'filesystem',
