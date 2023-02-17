@@ -1,0 +1,16 @@
+:root {
+    --status-bar-height: 22px;
+}
+
+.status-bar {
+    width: 100%;
+    height: var(--status-bar-height);
+
+    background: lightpink;
+}
+
+div {
+    padding: 0;
+    margin: 0;
+    border-spacing: 0;
+}

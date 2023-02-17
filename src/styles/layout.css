@@ -1,0 +1,24 @@
+:root {
+    --editor-width: 100%;
+}
+
+.panels-container {
+    width: 100%;
+    height: calc(100% - var(--status-bar-height));
+}
+
+.left-panel, .right-panel {
+    height: 100%;
+
+    display: inline-block;
+}
+
+.left-panel {
+    width: var(--editor-width, 50%);
+    background: lightcoral;
+}
+
+.right-panel {
+    width: calc(100% - var(--editor-width, 50%));
+    background: lightgreen;
+}
