@@ -37,8 +37,6 @@ function _keypressed(key)
 end
 `;
 
-// TODO: Add JetBrains Mono & Enable Ligatures
-
 export class CodeEditor {
     private readonly editor: monaco.editor.IStandaloneCodeEditor;
     private readonly onResizeListener = () => this.editor.layout();
@@ -52,6 +50,9 @@ export class CodeEditor {
             language: 'lua',
             theme: 'vs-dark',
             cursorBlinking: 'smooth',
+
+            fontFamily: 'JetBrains Mono',
+            fontLigatures: true,
         });
 
         const model = this.editor.getModel()!;
