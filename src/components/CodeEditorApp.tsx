@@ -20,10 +20,21 @@ function RightPanel() {
     </div>;
 }
 
-function StatusBar() {
-    return <div className='status-bar'>
+function StatusItem({ content }: { content: string }) {
+    return <div className='item'>
+        {content}
+    </div>
+}
 
-    </div>;
+function StatusBar() {
+    return <footer className='status-bar'>
+        <div className='left-items'>
+            <StatusItem content='EXPERIMENTAL YYYY-MM-DD hh:mm' />
+        </div>
+        <div className='right-items'>
+            <StatusItem content='Connected to LIKO-12' />
+        </div>
+    </footer>;
 }
 
 export function CodeEditorApp() {

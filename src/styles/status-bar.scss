@@ -1,0 +1,47 @@
+:root {
+    --status-bar-height: 22px;
+}
+
+.status-bar {
+    width: 100%;
+    height: var(--status-bar-height);
+
+    background: #faa21b;
+
+    display: flex;
+
+    .left-items,
+    .right-items {
+        height: 100%;
+        display: flex;
+    }
+
+    .left-items {
+        flex-grow: 1;
+    }
+
+    .item {
+        height: 100%;
+        max-width: 40vw;
+
+        display: inline-block;
+
+        margin: 0 3px;
+        padding: 0 5px;
+
+        line-height: var(--status-bar-height);
+        font-size: 12px;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        cursor: pointer;
+        -webkit-user-select: none;
+        user-select: none;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+    }
+}
