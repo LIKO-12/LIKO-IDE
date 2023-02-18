@@ -1,7 +1,9 @@
 import Tippy, { useSingleton } from '@tippyjs/react';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { CodeEditor } from '../editor';
+import { ConnectionManager, ConnectionStatus } from '../lib/connection-manager';
+import { connectionManager } from '../singleton';
 
 function LeftPanel() {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -44,8 +46,51 @@ function StatusItem({ icon, alt, content, singleton }: StatusItemProps) {
     </Tippy>
 }
 
+const statusLabels: Record<ConnectionStatus, string> = {
+    [ConnectionStatus.NotConnected]: 'Not Connected',
+    [ConnectionStatus.Connecting]: 'Connecting',
+    [ConnectionStatus.Identifying]: 'Identifying',
+    [ConnectionStatus.Connected]: 'Connected',
+    [ConnectionStatus.Disconnected]: 'Disconnected',
+};
+
+const statusIcons: Record<ConnectionStatus, string> = {
+    [ConnectionStatus.NotConnected]: 'power_off',
+    [ConnectionStatus.Connecting]: 'pending',
+    [ConnectionStatus.Identifying]: 'pending',
+    [ConnectionStatus.Connected]: 'power',
+    [ConnectionStatus.Disconnected]: 'power_off',
+};
+
+
+function ConnectionStatusItem({ singleton }: { singleton: any }) {
+    const [status, setStatus] = useState(connectionManager.status);
+
+    // TODO: Change color based on status.
+    // TODO: Trigger reconnect/disconnect on user interaction.
+    // TODO: Provide actual alt text.
+
+    useEffect(() => {
+        const listener = (manager: ConnectionManager) => {
+            setStatus(manager.status);
+        };
+
+        connectionManager.addEventListener('status_update', listener);
+        return () => connectionManager.removeEventListener('status_update', listener);
+    }, []);
+
+    return <StatusItem
+        icon={statusIcons[status]}
+        alt='LIKO-12: experimental-20230217-1843'
+        content={statusLabels[status]}
+        singleton={singleton}
+    />;
+}
+
 function StatusBar() {
     const [source, target] = useSingleton();
+
+    // TODO: Provide the singleton in a context.
 
     return <footer className='status-bar'>
         <Tippy singleton={source} duration={100} />
@@ -54,7 +99,7 @@ function StatusBar() {
             <StatusItem icon='update' alt='IDE Release' content='EXPERIMENTAL 2023-02-17 18:40' singleton={target} />
         </div>
         <div className='right-items'>
-            <StatusItem icon='power' alt='LIKO-12: experimental-20230217-1843' content='Connected' singleton={target} />
+            <ConnectionStatusItem singleton={target} />
             <StatusItem icon='play_arrow' alt='Execute the code in LIKO-12' content='Run Game' singleton={target} />
         </div>
     </footer>;
