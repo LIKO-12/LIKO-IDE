@@ -66,12 +66,26 @@ class Utilities {
     /**
      * @param delay - in milliseconds.
      */
-    static async sleep(delay: number): Promise<void> {
-        return new Promise((resolve) => setTimeout(resolve, delay));
+    static async sleep(delay: number, abortSignal?: AbortSignal): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const abortAborter = new AbortController();
+
+            const id = setTimeout(() => {
+                abortAborter.abort();
+                resolve();
+            }, delay);
+
+            abortSignal?.addEventListener('abort', () => {
+                clearTimeout(id);
+                reject('aborted');
+            }, { signal: abortAborter.signal });
+        });
     }
 
     /**
-     * Waits for a websocket until it reaches the ready state.
+     * Waits for a WebSocket until it reaches the ready state.
+     * 
+     * Closes the WebSocket if aborted while waiting.
      */
     static async waitUntilReady(socket: WebSocket): Promise<void> {
         return new Promise((resolve, reject) => {
@@ -135,6 +149,11 @@ export class ConnectionManager {
     private readonly eventsTarget = new EventTarget();
     public readonly options: Readonly<ConnectionManagerOptions>;
 
+    /**
+     * Aborts any ongoing/active connection.
+     */
+    private abort = () => {};
+
     private _socket?: WebSocket;
     get socket() { return this.status === ConnectionStatus.Connected ? this._socket : undefined; }
 
@@ -179,19 +198,30 @@ export class ConnectionManager {
         this.eventsTarget.removeEventListener(type, () => callback(this));
     }
 
-    private reconnect() {
-        this.start().catch(console.error); // FIXME: This is a critical error, display something to the user about it.
+    reconnect() {
+        if (this.status !== ConnectionStatus.Disconnected) return;
+
+        const abortController = new AbortController();
+        this.abort = abortController.abort.bind(abortController);
+        const abortSignal = abortController.signal;
+
+        this.start(abortSignal).catch(console.error); // FIXME: This is a critical error, display something to the user about it.
+    }
+
+    disconnect() {
+        if (this._status === ConnectionStatus.Disconnected) return;
+        this.abort();
     }
 
     /**
      * Starts the procedure of establishing a connection.
      */
-    private async start() {
+    private async start(abortSignal?: AbortSignal) {
         this._retryCount = 0;
 
-        while (this._retryCount < this.options.maxRetries) {
+        while (this._retryCount < this.options.maxRetries && !abortSignal?.aborted) {
             try {
-                await this.attemptConnection();
+                await this.attemptConnection(abortSignal);
                 return;
             } catch (error) {
                 console.error('Error while attempting to connect:', error);
@@ -200,21 +230,43 @@ export class ConnectionManager {
         }
 
         this.status = ConnectionStatus.Disconnected;
+        if (abortSignal?.aborted) return;
 
         // FIXME: This is a critical error, display something to the user about it.
         console.log('Gave up connecting!');
     }
 
-    private async attemptConnection() {
+    private async attemptConnection(abortSignal?: AbortSignal) {
+        //#region Stage: Not Connected
         this.status = ConnectionStatus.NotConnected;
+        await Utilities.sleep(this.nextRetryDelay, abortSignal);
+        //#endregion
 
-        await Utilities.sleep(this.nextRetryDelay);
-
+        //#region Stage: Connecting
         this.status = ConnectionStatus.Connecting;
 
         const socket = new WebSocket('ws://localhost:50000'); // TODO: Allow configuring the port.
-        await Utilities.waitUntilReady(socket);
+        abortSignal?.addEventListener('abort', () => {
+            socket.close(1000, 'aborted');
 
+            if (this._socket !== socket) return;
+            delete this._socket;
+
+            this.status = ConnectionStatus.Disconnected;
+        });
+
+        await Utilities.waitUntilReady(socket);
+        //#endregion
+
+        //#region Stage: Identifying
+        this.status = ConnectionStatus.Identifying;
+        
+        const identificationRPC = new IdentificationRPC(socket);
+        // await identificationRPC.identify();
+        identificationRPC.detach();
+        //#endregion
+
+        //#region Stage: Connected
         socket.addEventListener('close', () => {
             if (this._socket !== socket) return;
             delete this._socket;
@@ -223,15 +275,10 @@ export class ConnectionManager {
             this.reconnect();
         }, { once: true });
 
-        this.status = ConnectionStatus.Identifying;
-        
-        const identificationRPC = new IdentificationRPC(socket);
-        // await identificationRPC.identify();
-        identificationRPC.detach();
-
         this._socket = socket;
-        
+        // The status has to be updated after setting the socket because an event will be triggered.
         this.status = ConnectionStatus.Connected;
+        //#endregion
 
         // TODO: Add timeout.
         // TODO: Add heartbeat.

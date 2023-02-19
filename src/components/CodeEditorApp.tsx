@@ -1,5 +1,5 @@
 import Tippy, { useSingleton } from '@tippyjs/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { CodeEditor } from '../lib/code-editor';
 import { ConnectionManager, ConnectionStatus } from '../lib/connection-manager';
@@ -31,15 +31,17 @@ interface StatusItemProps {
     alt?: string;
     content?: string;
 
+    onClick?: () => void;
+
     /**
      * Tippy singleton.
      */
     singleton?: any;
 }
 
-function StatusItem({ icon, alt, content, singleton }: StatusItemProps) {
+function StatusItem({ icon, alt, content, onClick, singleton }: StatusItemProps) {
     return <Tippy content={alt} disabled={!alt} singleton={singleton}>
-        <div className='item'>
+        <div onClick={onClick} className='item'>
             {icon ? <span className='material-icons-outlined'>{icon}</span> : null}
             {content ?? null}
         </div>
@@ -70,6 +72,11 @@ function ConnectionStatusItem({ singleton }: { singleton: any }) {
     // TODO: Trigger reconnect/disconnect on user interaction.
     // TODO: Provide actual alt text.
 
+    const onClick = useCallback(() => {
+        if (connectionManager.status === ConnectionStatus.Disconnected) connectionManager.reconnect();
+        else connectionManager.disconnect();
+    }, []);
+
     useEffect(() => {
         const listener = (manager: ConnectionManager) => {
             setStatus(manager.status);
@@ -79,10 +86,14 @@ function ConnectionStatusItem({ singleton }: { singleton: any }) {
         return () => connectionManager.removeEventListener('status_update', listener);
     }, []);
 
+    // TODO: Show the connected client version.
+
     return <StatusItem
         icon={statusIcons[status]}
-        alt='LIKO-12: experimental-20230217-1843'
+        // alt='LIKO-12: experimental-20230217-1843'
+        alt={status === ConnectionStatus.Disconnected ? 'Click to reconnect' : 'Click to disconnect'}
         content={statusLabels[status]}
+        onClick={onClick}
         singleton={singleton}
     />;
 }
