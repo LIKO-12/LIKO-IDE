@@ -1,16 +1,16 @@
 import Tippy, { useSingleton } from '@tippyjs/react';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { CodeEditor } from '../editor';
+import { CodeEditor } from '../lib/code-editor';
 import { ConnectionManager, ConnectionStatus } from '../lib/connection-manager';
-import { connectionManager } from '../singleton';
+import { connectionManager, remoteAgent } from '../singleton';
 
 function LeftPanel() {
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (!containerRef.current) return;
-        const editor = new CodeEditor(containerRef.current);
+        const editor = new CodeEditor(containerRef.current, remoteAgent);
         return () => editor.dispose();
     }, [containerRef.current]);
 

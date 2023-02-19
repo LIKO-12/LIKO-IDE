@@ -95,7 +95,7 @@ class IdentificationRPC {
     private socket?: WebSocket;
 
     private readonly client = new JSONRPCClient((request) => {
-        if (!this.socket) return Promise.reject('The RPC server & client was disposed');
+        if (!this.socket) return Promise.reject('The RPC server & client was detached');
 
         try {
             this.socket.send(JSON.stringify(request));
@@ -122,9 +122,12 @@ class IdentificationRPC {
      * Detach the RPC client & server from the socket without closing it.
      */
     detach() {
-        if (!this.socket) throw new Error('Already disposed!');
+        if (!this.socket) throw new Error('Already detached!');
+        
         this.socket?.removeEventListener('message', this.messageListener);
         delete this.socket;
+
+        this.client.rejectAllPendingRequests(`Connection closed.`);
     }
 }
 

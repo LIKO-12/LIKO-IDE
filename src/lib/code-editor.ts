@@ -1,8 +1,6 @@
 
 import * as monaco from 'monaco-editor';
-import { Remote } from './remote';
-
-const remote = new Remote();
+import { RemoteAgent } from './remote-agent';
 
 const exampleProgram = `
 print("Hello from game.lua");
@@ -44,6 +42,7 @@ export class CodeEditor {
 
     constructor(
         container: HTMLElement,
+        private remoteAgent: RemoteAgent,
     ) {
         this.editor = monaco.editor.create(container, {
             value: localStorage.getItem('code') ?? exampleProgram,
@@ -71,7 +70,7 @@ export class CodeEditor {
             ],
             contextMenuGroupId: 'navigation',
             run: async () => {
-                await remote.run(model.getValue());
+                await this.remoteAgent.run(model.getValue());
                 console.log('Sent script successfully!');
             },
         });
