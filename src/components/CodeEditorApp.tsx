@@ -110,12 +110,12 @@ function formatVersionName(version: string): string {
         return `DEVELOPMENT (${version.substring(0, 7)})`
 
     return version.toUpperCase();
-    
 }
 
 function StatusBar() {
     const [source, target] = useSingleton();
-    const version = useMemo(() => formatVersionName(LIKO_VERSION), [LIKO_VERSION])
+    const version = useMemo(() => formatVersionName(LIKO_VERSION), [LIKO_VERSION]);
+    const copyToClipboard = useCallback(() => navigator.clipboard.writeText(LIKO_VERSION), [LIKO_VERSION]);
 
     // TODO: Provide the singleton in a context.
 
@@ -123,7 +123,7 @@ function StatusBar() {
         <Tippy singleton={source} duration={100} />
 
         <div className='left-items'>
-            <StatusItem icon='sell' alt='IDE Version' content={version} singleton={target} />
+            <StatusItem icon='sell' alt='IDE Version (click to copy)' content={version} onClick={copyToClipboard} singleton={target} />
         </div>
         <div className='right-items'>
             <ConnectionStatusItem singleton={target} />
