@@ -1,5 +1,5 @@
 import Tippy, { useSingleton } from '@tippyjs/react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { CodeEditor } from '../lib/code-editor';
 import { ConnectionManager, ConnectionStatus } from '../lib/connection-manager';
@@ -98,8 +98,24 @@ function ConnectionStatusItem({ singleton }: { singleton: any }) {
     />;
 }
 
+function formatVersionName(version: string): string {
+    const experimental = version.match(/^experimental\-(?<year>\d{4})(?<month>\d\d)(?<day>\d\d)\-(?<hour>\d\d)(?<minute>\d\d)$/);
+
+    if (experimental?.groups) {
+        const { year, month, day, hour, minute } = experimental.groups;
+        return `EXPERIMENTAL ${year}-${month}-${day} ${hour}:${minute}`;
+    }
+
+    if (version.match(/^[0-9a-fA-F]{40}$/))
+        return `DEVELOPMENT (${version.substring(0, 7)})`
+
+    return version.toUpperCase();
+    
+}
+
 function StatusBar() {
     const [source, target] = useSingleton();
+    const version = useMemo(() => formatVersionName(LIKO_VERSION), [LIKO_VERSION])
 
     // TODO: Provide the singleton in a context.
 
@@ -107,7 +123,7 @@ function StatusBar() {
         <Tippy singleton={source} duration={100} />
 
         <div className='left-items'>
-            <StatusItem icon='update' alt='IDE Release' content='EXPERIMENTAL 2023-02-17 18:40' singleton={target} />
+            <StatusItem icon='sell' alt='IDE Version' content={version} singleton={target} />
         </div>
         <div className='right-items'>
             <ConnectionStatusItem singleton={target} />

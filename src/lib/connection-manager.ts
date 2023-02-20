@@ -233,7 +233,6 @@ export class ConnectionManager {
         if (abortSignal?.aborted) return;
 
         // FIXME: This is a critical error, display something to the user about it.
-        console.log('Gave up connecting!');
     }
 
     private async attemptConnection(abortSignal?: AbortSignal) {
