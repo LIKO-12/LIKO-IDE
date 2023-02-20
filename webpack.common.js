@@ -3,6 +3,9 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const { TsconfigPathsPlugin } = require('tsconfig-paths-webpack-plugin');
+const { DefinePlugin } = require('webpack');
+
+const { fetchVersion } = require('./scripts/version');
 
 // TODO: Tree shaking.
 
@@ -17,6 +20,11 @@ module.exports = {
         }),
         new MonacoWebpackPlugin({
             languages: ['lua', 'javascript', 'typescript'],
+        }),
+        new DefinePlugin({
+            LIKO_VERSION: DefinePlugin.runtimeValue(() => JSON.stringify(fetchVersion()), {
+                contextDependencies: [path.resolve(__dirname, '.git')]
+            }),
         }),
     ],
     module: {
@@ -42,7 +50,7 @@ module.exports = {
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
-        plugins: [new TsconfigPathsPlugin()],
+        // plugins: [new TsconfigPathsPlugin()],
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
