@@ -117,6 +117,7 @@ function StatusBar() {
     const version = useMemo(() => formatVersionName(LIKO_VERSION), [LIKO_VERSION]);
     const copyToClipboard = useCallback(() => navigator.clipboard.writeText(LIKO_VERSION), [LIKO_VERSION]);
     // TODO: Show a toast to the user about the version being copied.
+    // FIXME: Add support for Release and Pre-Release tags.
 
     // TODO: Provide the singleton in a context.
 
