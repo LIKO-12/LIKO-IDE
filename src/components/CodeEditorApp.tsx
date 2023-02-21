@@ -5,6 +5,16 @@ import { CodeEditor } from '../lib/code-editor';
 import { ConnectionManager, ConnectionStatus } from '../lib/connection-manager';
 import { connectionManager, remoteAgent } from '../singleton';
 
+export function CodeEditorApp() {
+    return <>
+        <div className='panels-container'>
+            <LeftPanel />
+            <RightPanel />
+        </div>
+        <StatusBar />
+    </>;
+}
+
 function LeftPanel() {
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -23,31 +33,55 @@ function RightPanel() {
     </div>;
 }
 
-interface StatusItemProps {
-    /**
-     * https://fonts.google.com/icons?icon.style=Outlined
-     */
-    icon?: string;
-    alt?: string;
-    content?: string;
+function StatusBar() {
+    const [source, target] = useSingleton();
+    
+    // TODO: Provide the singleton in a context.
 
-    onClick?: () => void;
+    return <footer className='status-bar'>
+        <Tippy singleton={source} duration={100} />
 
-    /**
-     * Tippy singleton.
-     */
-    singleton?: any;
-}
-
-function StatusItem({ icon, alt, content, onClick, singleton }: StatusItemProps) {
-    return <Tippy content={alt} disabled={!alt} singleton={singleton}>
-        <div onClick={onClick} className='item'>
-            {icon ? <span className='material-icons-outlined'>{icon}</span> : null}
-            {content ?? null}
+        <div className='left-items'>
+            <VersionItem singleton={target} />
         </div>
-    </Tippy>
+        <div className='right-items'>
+            <ConnectionStatusItem singleton={target} />
+            <StatusItem icon='play_arrow' alt='Execute the code in LIKO-12' content='Run Game' singleton={target} />
+        </div>
+    </footer>;
 }
 
+//#region VersionItem
+function formatVersionName(version: string): string {
+    const experimental = version.match(/^experimental\-(?<year>\d{4})(?<month>\d\d)(?<day>\d\d)\-(?<hour>\d\d)(?<minute>\d\d)$/);
+
+    if (experimental?.groups) {
+        const { year, month, day, hour, minute } = experimental.groups;
+        return `EXPERIMENTAL ${year}-${month}-${day} ${hour}:${minute}`;
+    }
+
+    if (version.match(/^[0-9a-fA-F]{40}$/))
+        return `DEVELOPMENT (${version.substring(0, 7)})`
+
+    return version.toUpperCase();
+}
+
+function VersionItem({ singleton }: { singleton?: any }) {
+    const version = useMemo(() => formatVersionName(LIKO_VERSION), [LIKO_VERSION]);
+    const copyToClipboard = useCallback(() => navigator.clipboard.writeText(LIKO_VERSION), [LIKO_VERSION]);
+    // TODO: Show a toast to the user about the version being copied.
+    // FIXME: Add support for Release and Pre-Release tags.
+
+    return <StatusItem
+        icon='sell'
+        alt='IDE Version (click to copy)'
+        content={version}
+        onClick={copyToClipboard}
+        singleton={singleton} />;
+}
+//#endregion
+
+//#region ConnectionStatusItem
 const statusLabels: Record<ConnectionStatus, string> = {
     [ConnectionStatus.NotConnected]: 'Not Connected',
     [ConnectionStatus.Connecting]: 'Connecting',
@@ -95,49 +129,31 @@ function ConnectionStatusItem({ singleton }: { singleton: any }) {
         singleton={singleton}
     />;
 }
+//#endregion
 
-function formatVersionName(version: string): string {
-    const experimental = version.match(/^experimental\-(?<year>\d{4})(?<month>\d\d)(?<day>\d\d)\-(?<hour>\d\d)(?<minute>\d\d)$/);
+//#region StatusItem
+interface StatusItemProps {
+    /**
+     * https://fonts.google.com/icons?icon.style=Outlined
+     */
+    icon?: string;
+    alt?: string;
+    content?: string;
 
-    if (experimental?.groups) {
-        const { year, month, day, hour, minute } = experimental.groups;
-        return `EXPERIMENTAL ${year}-${month}-${day} ${hour}:${minute}`;
-    }
+    onClick?: () => void;
 
-    if (version.match(/^[0-9a-fA-F]{40}$/))
-        return `DEVELOPMENT (${version.substring(0, 7)})`
-
-    return version.toUpperCase();
+    /**
+     * Tippy singleton.
+     */
+    singleton?: any;
 }
 
-function StatusBar() {
-    const [source, target] = useSingleton();
-    const version = useMemo(() => formatVersionName(LIKO_VERSION), [LIKO_VERSION]);
-    const copyToClipboard = useCallback(() => navigator.clipboard.writeText(LIKO_VERSION), [LIKO_VERSION]);
-    // TODO: Show a toast to the user about the version being copied.
-    // FIXME: Add support for Release and Pre-Release tags.
-
-    // TODO: Provide the singleton in a context.
-
-    return <footer className='status-bar'>
-        <Tippy singleton={source} duration={100} />
-
-        <div className='left-items'>
-            <StatusItem icon='sell' alt='IDE Version (click to copy)' content={version} onClick={copyToClipboard} singleton={target} />
+function StatusItem({ icon, alt, content, onClick, singleton }: StatusItemProps) {
+    return <Tippy content={alt} disabled={!alt} singleton={singleton}>
+        <div onClick={onClick} className='item'>
+            {icon ? <span className='material-icons-outlined'>{icon}</span> : null}
+            {content ?? null}
         </div>
-        <div className='right-items'>
-            <ConnectionStatusItem singleton={target} />
-            <StatusItem icon='play_arrow' alt='Execute the code in LIKO-12' content='Run Game' singleton={target} />
-        </div>
-    </footer>;
+    </Tippy>
 }
-
-export function CodeEditorApp() {
-    return <>
-        <div className='panels-container'>
-            <LeftPanel />
-            <RightPanel />
-        </div>
-        <StatusBar />
-    </>;
-}
+//#endregion
