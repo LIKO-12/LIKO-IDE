@@ -69,8 +69,6 @@ function ConnectionStatusItem({ singleton }: { singleton: any }) {
     const [status, setStatus] = useState(connectionManager.status);
 
     // TODO: Change color based on status.
-    // TODO: Trigger reconnect/disconnect on user interaction.
-    // TODO: Provide actual alt text.
 
     const onClick = useCallback(() => {
         if (connectionManager.status === ConnectionStatus.Disconnected) connectionManager.reconnect();
