@@ -6,24 +6,32 @@ import { ConnectionManager, ConnectionStatus } from '../lib/connection-manager';
 import { connectionManager, remoteAgent } from '../singleton';
 
 export function CodeEditorApp() {
+    const editorContainerRef = useRef<HTMLDivElement>(null);
+    const [codeEditor, setCodeEditor] = useState<CodeEditor>();
+
+    useEffect(() => {
+        if (!editorContainerRef.current) return;
+
+        const editor = new CodeEditor(editorContainerRef.current, remoteAgent);
+        setCodeEditor(editor);
+
+        return () => {
+            setCodeEditor(undefined);
+            editor.dispose();
+        };
+
+    }, [editorContainerRef.current]);
+
     return <>
         <div className='panels-container'>
-            <LeftPanel />
+            <LeftPanel containerRef={editorContainerRef} />
             <RightPanel />
         </div>
-        <StatusBar />
+        <StatusBar codeEditor={codeEditor} />
     </>;
 }
 
-function LeftPanel() {
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        if (!containerRef.current) return;
-        const editor = new CodeEditor(containerRef.current, remoteAgent);
-        return () => editor.dispose();
-    }, [containerRef.current]);
-
+function LeftPanel({ containerRef }: { containerRef: React.RefObject<HTMLDivElement> }) {
     return <div className='left-panel' ref={containerRef}></div>;
 }
 
@@ -33,10 +41,12 @@ function RightPanel() {
     </div>;
 }
 
-function StatusBar() {
+function StatusBar({ codeEditor }: { codeEditor?: CodeEditor }) {
     const [source, target] = useSingleton();
-    
     // TODO: Provide the singleton in a context.
+
+    // TODO: Show a toast to the user about the success/failure of execution.
+    const onRunGameClick = useCallback(async () => codeEditor?.runGameOnAgent(), [codeEditor]);
 
     return <footer className='status-bar'>
         <Tippy singleton={source} duration={100} />
@@ -46,7 +56,9 @@ function StatusBar() {
         </div>
         <div className='right-items'>
             <ConnectionStatusItem singleton={target} />
-            <StatusItem icon='play_arrow' alt='Execute the code in LIKO-12' content='Run Game' singleton={target} />
+            <StatusItem
+                icon='play_arrow' alt='Execute the code in LIKO-12' content='Run Game'
+                onClick={onRunGameClick} singleton={target} />
         </div>
     </footer>;
 }

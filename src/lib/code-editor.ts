@@ -37,6 +37,8 @@ end
 
 export class CodeEditor {
     private readonly editor: monaco.editor.IStandaloneCodeEditor;
+    private readonly model: monaco.editor.ITextModel;
+
     private readonly onResizeListener = () => this.editor.layout();
     private disposed = false;
 
@@ -54,10 +56,10 @@ export class CodeEditor {
             fontLigatures: true,
         });
 
-        const model = this.editor.getModel()!;
+        this.model = this.editor.getModel()!;
 
-        model.onDidChangeContent(() => {
-            localStorage.setItem('code', model.getValue());
+        this.model.onDidChangeContent(() => {
+            localStorage.setItem('code', this.model.getValue());
             // TODO: sync indicator.
             // TODO: use a persistent storage method.
         });
@@ -68,14 +70,15 @@ export class CodeEditor {
             keybindings: [
                 monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyR,
             ],
-            contextMenuGroupId: 'navigation',
-            run: async () => {
-                await this.remoteAgent.run(model.getValue());
-                console.log('Sent script successfully!');
-            },
+            run: this.runGameOnAgent.bind(this),
         });
 
         addEventListener('resize', this.onResizeListener);
+    }
+
+    async runGameOnAgent() {
+        const scriptContent = this.model.getValue();
+        return this.remoteAgent.run(scriptContent);
     }
 
     dispose() {
