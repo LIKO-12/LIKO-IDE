@@ -1,10 +1,11 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { CodeEditorApp } from './editors/code/components/code-editor';
+// import { CodeEditorApp } from './editors/code/components/code-editor';
+import { ImageEditor } from './editors/image/components/image-editor';
 
 function App() {
-    return <CodeEditorApp />;
+    return <ImageEditor />;
 }
 
 // Create root HTML element.
