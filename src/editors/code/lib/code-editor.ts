@@ -1,6 +1,6 @@
 
 import * as monaco from 'monaco-editor';
-import { RemoteAgent } from './remote-agent';
+import { RemoteAgent } from '../../../lib/remote-agent';
 
 const exampleProgram = `
 print("Hello from game.lua");

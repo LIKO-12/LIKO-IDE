@@ -1,8 +1,4 @@
-:root {
-    --status-bar-height: 22px;
-}
-
-.status-bar {
+.code-editor .status-bar {
     width: 100%;
     height: var(--status-bar-height);
 

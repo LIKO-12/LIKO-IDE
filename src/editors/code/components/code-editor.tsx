@@ -1,9 +1,13 @@
 import Tippy, { useSingleton } from '@tippyjs/react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import '../styles/variables.scss';
+import '../styles/layout.scss';
+import '../styles/status-bar.scss';
+
 import { CodeEditor } from '../lib/code-editor';
-import { ConnectionManager, ConnectionStatus } from '../lib/connection-manager';
-import { connectionManager, remoteAgent } from '../singleton';
+import { ConnectionManager, ConnectionStatus } from '../../../lib/connection-manager';
+import { connectionManager, remoteAgent } from '../../../singleton';
 
 export function CodeEditorApp() {
     const editorContainerRef = useRef<HTMLDivElement>(null);
@@ -22,13 +26,13 @@ export function CodeEditorApp() {
 
     }, [editorContainerRef.current]);
 
-    return <>
+    return <div className='code-editor'>
         <div className='panels-container'>
             <LeftPanel containerRef={editorContainerRef} />
             <RightPanel />
         </div>
         <StatusBar codeEditor={codeEditor} />
-    </>;
+    </div>;
 }
 
 function LeftPanel({ containerRef }: { containerRef: React.RefObject<HTMLDivElement> }) {
