@@ -37,6 +37,7 @@ export class CanvasRenderer {
             }
         }
 
-        this.context.putImageData(this.buffer, 0, 0);
+        this.context.clearRect(0, 0, buffer.width, buffer.height);
+        this.context.putImageData(buffer, 0, 0);
     }
 }
