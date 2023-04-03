@@ -1,13 +1,21 @@
 import { ImageFrame } from './image-frame';
 import { Palette } from './palette';
 
+/*
+    Note out of a failed attempt:
+    -----------------------------
+
+    Don't use the `bitmaprenderer` canvas context, it doesn't support nearest neighbor filtering.
+    Which means the canvas will be rendered blurred.
+*/
+
 export class CanvasRenderer {
     private readonly context: CanvasRenderingContext2D;
     private readonly buffer = new ImageData(this.canvas.width, this.canvas.height);
 
     constructor(
         public readonly canvas: HTMLCanvasElement,
-        public readonly palette: Readonly<Palette>,
+        public readonly palette: Palette,
     ) {
         const context = canvas.getContext('2d');
         if (!context) throw new Error('Failed to create 2d context!');
@@ -28,7 +36,7 @@ export class CanvasRenderer {
                 const bufferIndex = y * buffer.width + x;
 
                 const colorId = (x < width && y < height) ? frame.data[4 * frameIndex] : 0;
-                const [r, g, b, a] = this.palette[colorId];
+                const [r, g, b, a] = this.palette[colorId] ?? [0, 0, 0, 0];
 
                 buffer.data[4 * bufferIndex] = r;
                 buffer.data[4 * bufferIndex + 1] = g;
