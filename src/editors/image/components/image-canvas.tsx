@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 
 import { CanvasRenderer } from '../lib/canvas-renderer';
 import { ImageFrame } from '../lib/image-frame';
@@ -28,16 +28,21 @@ function isButtonDown(buttons: number, button: keyof typeof buttonsBits) {
 
 interface ImageCanvasProps {
     frame: ImageFrame;
+
     width: number;
     height: number;
+
     palette: Palette;
+    brushColor: number;
 }
 
 /**
  * A component for editing the pixels of an image
  */
-export function ImageCanvas({ frame, width, height, palette }: ImageCanvasProps) {
+export function ImageCanvas({ frame, width, height, palette, brushColor }: ImageCanvasProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const brushColorRef = useRef(brushColor);
+    brushColorRef.current = brushColor;
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -65,7 +70,7 @@ export function ImageCanvas({ frame, width, height, palette }: ImageCanvasProps)
             const { buttons } = ev;
 
             if (isButtonDown(buttons, 'middle')) frame.data.fill(0);
-            else if (isButtonDown(buttons, 'left')) frame.setPixel(x, y, brushColor);
+            else if (isButtonDown(buttons, 'left')) frame.setPixel(x, y, brushColorRef.current);
             else if (isButtonDown(buttons, 'right')) frame.setPixel(x, y, 0);
             else return;
 

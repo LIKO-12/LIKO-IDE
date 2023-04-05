@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { Palette, RGBA } from '../lib/palette';
 
@@ -8,18 +8,17 @@ import '../styles/color-selector.scss';
 
 interface ColorsGrid {
     palette: Palette;
-    setColorId?: (id: number) => void;
+    onSelect?: (id: number) => void;
 }
 
-function ColorsGrid({ palette, setColorId }: ColorsGrid) {
-
+function ColorsGrid({ palette, onSelect }: ColorsGrid) {
     return <>
         {palette.map(([r, g, b, _a], colorId) => {
             return <span
                 key={colorId}
                 className='color-element'
                 style={{ backgroundColor: `rgb(${r},${g},${b})` }}
-                onClick={setColorId && (() => setColorId(colorId))}
+                onClick={onSelect && (() => onSelect(colorId))}
             />;
         })}
     </>;
@@ -29,12 +28,15 @@ function ColorsGrid({ palette, setColorId }: ColorsGrid) {
 
 interface ColorSelectorProps {
     palette: Palette;
-    setColorId?: (id: number) => void;
+    /**
+     * Triggered when a color is selected from the palette.
+     */
+    onSelect?: (id: number) => void;
 }
 
-export function ColorSelector({ palette, setColorId }: ColorSelectorProps) {
+export function ColorSelector({ palette, onSelect }: ColorSelectorProps) {
     return <div className='color-selector'>
-        <ColorsGrid palette={palette} setColorId={setColorId} />
+        <ColorsGrid palette={palette} onSelect={onSelect} />
     </div>;
 }
 
