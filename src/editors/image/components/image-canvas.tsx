@@ -4,6 +4,8 @@ import { CanvasRenderer } from '../lib/canvas-renderer';
 import { ImageFrame } from '../lib/image-frame';
 import { Palette } from '../lib/palette';
 
+import '../styles/image-canvas.scss';
+
 //#region Utilities
 
 const { floor, min, max } = Math;
@@ -24,12 +26,12 @@ function isButtonDown(buttons: number, button: keyof typeof buttonsBits) {
 
 //#endregion
 
-type ImageCanvasProps = {
-    frame: ImageFrame,
-    width: number,
-    height: number,
-    palette: Palette,
-};
+interface ImageCanvasProps {
+    frame: ImageFrame;
+    width: number;
+    height: number;
+    palette: Palette;
+}
 
 /**
  * A component for editing the pixels of an image
@@ -50,7 +52,7 @@ export function ImageCanvas({ frame, width, height, palette }: ImageCanvasProps)
             // console.debug(ev.x, ev.y, ev.deltaX, ev.deltaY, ev.deltaZ, ev);
 
             const delta = floor(clamp(ev.deltaY, -1, 1));
-            brushColor = clamp(brushColor + delta, 0, palette.length);
+            brushColor = clamp(brushColor + delta, 0, palette.length - 1);
         }
 
         const onPointer = (ev: PointerEvent) => {

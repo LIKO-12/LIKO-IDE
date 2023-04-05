@@ -1,5 +1,6 @@
 
-export type Palette = [r: number, g: number, b: number, a: number][];
+export type RGBA = [r: number, g: number, b: number, a: number];
+export type Palette = RGBA[];
 
 export const pico8Palette: Palette = [
     [0, 0, 0, 255], // Black 0

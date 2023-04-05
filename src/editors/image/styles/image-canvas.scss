@@ -1,0 +1,17 @@
+.image-editor {
+    .image-canvas {
+        $size: 256px;
+
+        width: $size;
+        height: $size;
+
+        image-rendering: pixelated;
+
+        // The retro style.
+        // border: 3px solid black;
+
+        // The floating style.
+        border-radius: 10px;
+        box-shadow: 0px 2px 4px 1px rgba(0, 0, 0, 0.25);
+    }
+}

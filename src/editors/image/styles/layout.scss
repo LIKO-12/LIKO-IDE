@@ -13,14 +13,4 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
-    .image-canvas {
-        $size: 256px;
-
-        width: $size;
-        height: $size;
-
-        image-rendering: pixelated;
-        border: 3px solid black;
-    }
 }

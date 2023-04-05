@@ -1,0 +1,26 @@
+.image-editor {
+    .color-selector {
+        $element-size: 35px;
+        $row-length: 8;
+
+        width: calc($element-size * $row-length);
+        line-height: 0;
+
+        // The retro style.
+        // padding: 3px;
+        // border: 2px white solid;
+        // background: black;
+
+        // The floating style.
+        overflow: hidden;
+        border-radius: 10px;
+        box-shadow: 0px 2px 4px 1px rgba(0, 0, 0, 0.25);
+
+        .color-element {
+            width: $element-size;
+            height: $element-size;
+
+            display: inline-block;
+        }
+    }
+}
