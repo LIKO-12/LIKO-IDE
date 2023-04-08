@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 
 import { CanvasRenderer } from '../lib/canvas-renderer';
 import { ImageFrame } from '../lib/image-frame';
@@ -37,28 +37,28 @@ interface ImageCanvasProps {
 }
 
 /**
+ * Contains the state values that can change without requiring a rerender of the component.
+ */
+class ImageCanvasPassiveState {
+    brushColor = 7;
+}
+
+/**
  * A component for editing the pixels of an image
  */
 export function ImageCanvas({ frame, width, height, palette, brushColor }: ImageCanvasProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const brushColorRef = useRef(brushColor);
-    brushColorRef.current = brushColor;
+    const passive = useMemo(() => new ImageCanvasPassiveState(), []);
+
+    passive.brushColor = brushColor;
 
     useEffect(() => {
+        console.log('EFFECT UPDATED');
         const canvas = canvasRef.current;
         if (!canvas) return;
 
         const renderer = new CanvasRenderer(canvas, palette);
         renderer.render(frame);
-
-        let brushColor = 7;
-
-        const onWheel = (ev: WheelEvent) => {
-            // console.debug(ev.x, ev.y, ev.deltaX, ev.deltaY, ev.deltaZ, ev);
-
-            const delta = floor(clamp(ev.deltaY, -1, 1));
-            brushColor = clamp(brushColor + delta, 0, palette.length - 1);
-        }
 
         const onPointer = (ev: PointerEvent) => {
             const scaleX = canvas.clientWidth / canvas.width;
@@ -70,7 +70,7 @@ export function ImageCanvas({ frame, width, height, palette, brushColor }: Image
             const { buttons } = ev;
 
             if (isButtonDown(buttons, 'middle')) frame.data.fill(0);
-            else if (isButtonDown(buttons, 'left')) frame.setPixel(x, y, brushColorRef.current);
+            else if (isButtonDown(buttons, 'left')) frame.setPixel(x, y, passive.brushColor);
             else if (isButtonDown(buttons, 'right')) frame.setPixel(x, y, 0);
             else return;
 
@@ -82,14 +82,12 @@ export function ImageCanvas({ frame, width, height, palette, brushColor }: Image
             ev.preventDefault();
         };
 
-        canvas.addEventListener('wheel', onWheel);
         canvas.addEventListener('pointerdown', onPointer);
         canvas.addEventListener('pointermove', onPointer);
         canvas.addEventListener('pointerup', onPointer);
         canvas.addEventListener('contextmenu', onContextMenu);
 
         return () => {
-            canvas.removeEventListener('wheel', onWheel);
             canvas.removeEventListener('pointerdown', onPointer);
             canvas.removeEventListener('pointermove', onPointer);
             canvas.removeEventListener('pointerup', onPointer);
