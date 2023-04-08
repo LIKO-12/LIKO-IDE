@@ -20,6 +20,6 @@ export function ImageEditor() {
     return <div className='image-editor'>
         <ImageCanvas frame={frame} width={frameSize} height={frameSize} palette={palette} brushColor={brushColor} />
         <div style={{ height: 20 }} />
-        <ColorSelector palette={palette} onSelect={setBrushColor} />
+        <ColorSelector palette={palette} selected={brushColor} onSelect={setBrushColor} />
     </div>;
 }
