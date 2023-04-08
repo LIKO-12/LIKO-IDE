@@ -25,9 +25,12 @@ export function ColorSelector({ palette, selected, onSelect }: ColorSelectorProp
                 style={{ backgroundColor: `rgb(${r},${g},${b})` }}
                 onClick={onSelect && (() => onSelect(colorId))}
             >
-                {selected == colorId && <div className='selection-indicator' />}
             </span>;
         })}
+        <div className='selection-indicator' style={{
+            ['--color-x']: selected % 8,
+            ['--color-y']: Math.floor(selected / 8),
+        } as React.CSSProperties}/>
     </div>;
 }
 

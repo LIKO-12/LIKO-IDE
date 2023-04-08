@@ -53,7 +53,6 @@ export function ImageCanvas({ frame, width, height, palette, brushColor }: Image
     passive.brushColor = brushColor;
 
     useEffect(() => {
-        console.log('EFFECT UPDATED');
         const canvas = canvasRef.current;
         if (!canvas) return;
 
