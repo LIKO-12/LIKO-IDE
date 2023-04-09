@@ -29,6 +29,9 @@ function isButtonDown(buttons: number, button: keyof typeof buttonsBits) {
 interface ImageCanvasProps {
     frame: ImageFrame;
 
+    offsetX?: number;
+    offsetY?: number;
+
     width: number;
     height: number;
 
@@ -46,7 +49,7 @@ class ImageCanvasPassiveState {
 /**
  * A component for editing the pixels of an image
  */
-export function ImageCanvas({ frame, width, height, palette, brushColor }: ImageCanvasProps) {
+export function ImageCanvas({ frame, offsetX, offsetY, width, height, palette, brushColor }: ImageCanvasProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const passive = useMemo(() => new ImageCanvasPassiveState(), []);
 
@@ -57,7 +60,7 @@ export function ImageCanvas({ frame, width, height, palette, brushColor }: Image
         if (!canvas) return;
 
         const renderer = new CanvasRenderer(canvas, palette);
-        renderer.render(frame);
+        renderer.render(frame, offsetX, offsetY);
 
         const onPointer = (ev: PointerEvent) => {
             const scaleX = canvas.clientWidth / canvas.width;

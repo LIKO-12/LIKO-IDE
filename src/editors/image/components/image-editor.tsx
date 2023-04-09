@@ -11,14 +11,16 @@ import '../styles/layout.scss';
 
 
 export function ImageEditor() {
-    const frameSize = 8;
-    const frame = useMemo(() => new ImageFrame(frameSize, frameSize), []);
+    const frame = useMemo(() => new ImageFrame(192, 128), []);
+
+    const canvasSize = 8;
+    const offsetX = 0, offsetY = 0;
 
     const palette = pico8Palette;
     const [brushColor, setBrushColor] = useState(7);
 
     return <div className='image-editor'>
-        <ImageCanvas frame={frame} width={frameSize} height={frameSize} palette={palette} brushColor={brushColor} />
+        <ImageCanvas width={canvasSize} height={canvasSize} {...{ frame, offsetX, offsetY, palette, brushColor }} />
         <div style={{ height: 20 }} />
         <ColorSelector palette={palette} selected={brushColor} onSelect={setBrushColor} />
     </div>;

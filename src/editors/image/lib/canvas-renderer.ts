@@ -25,8 +25,8 @@ export class CanvasRenderer {
     public render(frame: ImageFrame, offsetX = 0, offsetY = 0) {
         offsetX = Math.floor(offsetX), offsetY = Math.floor(offsetY);
 
-        const width = Math.min(frame.width, this.canvas.width);
-        const height = Math.min(frame.height, this.canvas.height);
+        const width = Math.max(Math.min(frame.width - offsetX, this.canvas.width), 0);
+        const height = Math.max(Math.min(frame.height - offsetY, this.canvas.height), 0);
 
         const buffer = this.buffer;
 
