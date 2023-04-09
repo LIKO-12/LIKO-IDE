@@ -15,4 +15,4 @@ document.body.append(rootNode);
 
 // Create React root.
 const root = createRoot(rootNode);
-root.render(<App />);
+root.render(<React.StrictMode><App /></React.StrictMode>);
