@@ -1,4 +1,4 @@
-type ChangeObserver = (frame: ImageFrame) => void;
+type ChangeListener = (frame: ImageFrame) => void;
 
 export class ImageFrame {
     /**
@@ -6,7 +6,7 @@ export class ImageFrame {
      */
     private readonly rwData = new Uint8ClampedArray(4 * this.width * this.height);
 
-    private observers: ChangeObserver[] = [];
+    private listeners: ChangeListener[] = [];
 
     constructor(
         public readonly width: number,
@@ -31,23 +31,23 @@ export class ImageFrame {
         return this.rwData[4 * (y * this.width * x)];
     }
 
-    observe(observer: ChangeObserver): void {
-        if (this.observers.includes(observer)) return;
-        this.observers.push(observer);
+    addListener(listener: ChangeListener): void {
+        if (this.listeners.includes(listener)) return;
+        this.listeners.push(listener);
     }
 
     /**
      * Unregister an observer.
      */
-    miss(observer: ChangeObserver): void {
-        this.observers = this.observers.filter(value => value !== observer);
+    removeListener(listener: ChangeListener): void {
+        this.listeners = this.listeners.filter(value => value !== listener);
     }
 
     /**
      * Notifies the observers of changes.
      */
     private notify(): void {
-        for (const observer of this.observers)
-            observer(this);
+        for (const listener of this.listeners)
+            listener(this);
     }
 }
