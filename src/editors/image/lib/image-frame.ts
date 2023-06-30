@@ -31,6 +31,11 @@ export class ImageFrame {
         return this.rwData[4 * (y * this.width * x)];
     }
 
+    clear(): void {
+        this.rwData.fill(0);
+        this.notify();
+    }
+
     addListener(listener: ChangeListener): void {
         if (this.listeners.includes(listener)) return;
         this.listeners.push(listener);

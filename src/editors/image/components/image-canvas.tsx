@@ -71,7 +71,7 @@ export function ImageCanvas({ frame, offsetX, offsetY, width, height, palette, b
 
             const { buttons } = ev;
 
-            if (isButtonDown(buttons, 'middle')) frame.data.fill(0);
+            if (isButtonDown(buttons, 'middle')) frame.clear();
             else if (isButtonDown(buttons, 'left')) frame.setPixel(x, y, passive.brushColor);
             else if (isButtonDown(buttons, 'right')) frame.setPixel(x, y, 0);
             else return;
