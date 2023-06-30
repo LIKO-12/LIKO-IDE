@@ -60,7 +60,7 @@ export function ImageCanvas({ frame, offsetX, offsetY, width, height, palette, b
         if (!canvas) return;
 
         const renderer = new CanvasRenderer(canvas, palette);
-        renderer.render(frame, offsetX, offsetY);
+        const onImageChanges = () => renderer.render(frame, offsetX, offsetY);
 
         const onPointer = (ev: PointerEvent) => {
             const scaleX = canvas.clientWidth / canvas.width;
@@ -76,7 +76,6 @@ export function ImageCanvas({ frame, offsetX, offsetY, width, height, palette, b
             else if (isButtonDown(buttons, 'right')) frame.setPixel(x, y, 0);
             else return;
 
-            renderer.render(frame);
             ev.preventDefault();
         };
 
@@ -88,12 +87,16 @@ export function ImageCanvas({ frame, offsetX, offsetY, width, height, palette, b
         canvas.addEventListener('pointermove', onPointer);
         canvas.addEventListener('pointerup', onPointer);
         canvas.addEventListener('contextmenu', onContextMenu);
+        frame.addListener(onImageChanges);
+
+        onImageChanges();
 
         return () => {
             canvas.removeEventListener('pointerdown', onPointer);
             canvas.removeEventListener('pointermove', onPointer);
             canvas.removeEventListener('pointerup', onPointer);
             canvas.removeEventListener('contextmenu', onContextMenu);
+            frame.removeListener(onImageChanges);
         };
 
     }, [canvasRef.current, frame, palette]);
