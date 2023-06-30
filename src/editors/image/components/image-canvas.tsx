@@ -49,7 +49,7 @@ class ImageCanvasPassiveState {
 /**
  * A component for editing the pixels of an image
  */
-export function ImageCanvas({ frame, offsetX, offsetY, width, height, palette, brushColor }: ImageCanvasProps) {
+export function ImageCanvas({ frame, offsetX = 0, offsetY = 0, width, height, palette, brushColor }: ImageCanvasProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const passive = useMemo(() => new ImageCanvasPassiveState(), []);
 
@@ -71,7 +71,7 @@ export function ImageCanvas({ frame, offsetX, offsetY, width, height, palette, b
 
             const { buttons } = ev;
 
-            if (isButtonDown(buttons, 'middle')) frame.clear();
+            if (isButtonDown(buttons, 'middle')) frame.fill(passive.brushColor, offsetX, offsetY, width, height);
             else if (isButtonDown(buttons, 'left')) frame.setPixel(x, y, passive.brushColor);
             else if (isButtonDown(buttons, 'right')) frame.setPixel(x, y, 0);
             else return;
